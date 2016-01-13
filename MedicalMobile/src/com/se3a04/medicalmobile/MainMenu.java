@@ -1,0 +1,296 @@
+package com.se3a04.medicalmobile;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import android.widget.ListView;
+
+public class MainMenu extends ListActivity {
+
+	public String[] user_type = new String[] { "ADMIN", "DOC", "NURSE", "SEC",
+			"PATIENT" };
+
+	public static String sentType, display_name;
+	
+	TextView show_name;
+
+	private ListView lv;
+	final ArrayList<String> lst = new ArrayList<String>();
+
+	// List view Adapter
+	private ArrayAdapter<String> adapter;
+
+	private String[] admin_menu_values = new String[] { "Patient List",
+			"Staff List", "Profile", "Audited Information", "Add User" };
+
+	private String[] doctor_menu_values = new String[] { "Patient List",
+			"Schedule", "Profile" };
+
+	private String[] nurse_menu_values = new String[] { "Patient List",
+			"Schedule", "Profile" };
+
+	private String[] sec_menu_values = new String[] { "Patient List",
+			"Staff List", "Profile", "View Appointment Requests" };
+	
+	private String[] patient_menu_values = new String[] { "Schedule", "Profile", "Reminders" };
+
+	private String products[] = new String[] { "Hello", "Goodbye" }; // Names of
+																		// Users
+																		// Buttons
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.mainmenu);
+
+		lv = getListView(); // get the type of view
+
+		show_name = (TextView) findViewById(R.id.user_name);
+		
+		final ArrayList<String> lst = new ArrayList<String>(); // create an
+		lst.addAll(Arrays.asList(products));
+		adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+				R.id.product_name, lst);
+		this.setListAdapter(adapter);
+
+		Bundle extras = getIntent().getExtras();
+		
+		if (extras != null) {
+			
+			sentType = extras.getString("typeSend");
+			display_name = extras.getString("nameSend");
+			show_name.setText(display_name);
+			updateMenu();
+			
+		}
+		
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> adapter, View lv, int i, long l){
+				
+				//admin
+				if (sentType.equalsIgnoreCase("admin")){
+					if (i == 0){
+						Toast.makeText(getApplicationContext(),admin_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toPatientList = new Intent(getApplicationContext(),
+								PatientList.class);
+						startActivity(toPatientList);
+					}
+					else if (i == 1){
+						Toast.makeText(getApplicationContext(), admin_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toStaffList = new Intent(getApplicationContext(),
+								StaffList.class);
+						toStaffList.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+						startActivity(toStaffList);
+
+					}
+					else if (i == 2){
+						Toast.makeText(getApplicationContext(), display_name + "'s " +admin_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toProfile = new Intent(getApplicationContext(),
+								Profile.class);
+						startActivity(toProfile);
+					}
+					else if (i == 3){
+						Toast.makeText(getApplicationContext(), admin_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toAuditedInformation = new Intent(getApplicationContext(),
+								Audits.class);
+						startActivity(toAuditedInformation);
+					}
+					else if (i == 4){
+						Toast.makeText(getApplicationContext(), admin_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toAddUser = new Intent(getApplicationContext(),
+								AddUser.class);
+						startActivity(toAddUser);
+					}
+					
+				}
+				//nurse or doctor
+				else if (sentType.equalsIgnoreCase("nurse")|sentType.equalsIgnoreCase("doctor")){
+				if(i == 0){
+					Toast.makeText(getApplicationContext(), doctor_menu_values[i],
+							Toast.LENGTH_SHORT).show();
+					updateMenu();
+					
+					Intent toPatientList = new Intent(getApplicationContext(),
+							PatientList.class);
+					startActivity(toPatientList);
+				}
+					else if (i == 1){
+						Toast.makeText(getApplicationContext(), doctor_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toSchedule = new Intent(getApplicationContext(),
+								CalendarView.class);
+						startActivity(toSchedule);
+					}
+					
+					else if (i == 2){
+						Toast.makeText(getApplicationContext(), display_name + "'s " +doctor_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toProfile = new Intent(getApplicationContext(),
+								Profile.class);
+						startActivity(toProfile);
+					}
+				}
+				//if secretary
+			else if (sentType.equalsIgnoreCase("secretary")){
+					
+				if (i == 0){
+					Toast.makeText(getApplicationContext(), sec_menu_values[i],
+							Toast.LENGTH_SHORT).show();
+					updateMenu();
+					
+					Intent toPatientList = new Intent(getApplicationContext(),
+							PatientList.class);
+					startActivity(toPatientList);
+				}
+				else if (i == 1){
+					Toast.makeText(getApplicationContext(), sec_menu_values[i],
+							Toast.LENGTH_SHORT).show();
+					updateMenu();
+					
+					Intent toStaffList = new Intent(getApplicationContext(),
+							StaffList.class);
+					startActivity(toStaffList);
+				}
+				else if (i == 2){
+					Toast.makeText(getApplicationContext(), display_name + "'s " +sec_menu_values[i],
+							Toast.LENGTH_SHORT).show();
+					updateMenu();
+					
+					Intent toProfile = new Intent(getApplicationContext(),
+							Profile.class);
+					startActivity(toProfile);
+				}
+				else if (i == 3){
+					Toast.makeText(getApplicationContext(), sec_menu_values[i],
+							Toast.LENGTH_SHORT).show();
+					updateMenu();
+					
+					Intent toAppointReqs = new Intent(getApplicationContext(),
+							Requests.class);
+					startActivity(toAppointReqs);
+				}
+				
+			
+			}
+				//patient
+				else if (sentType.equalsIgnoreCase("patient")){
+					if (i == 0){
+						Toast.makeText(getApplicationContext(), patient_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toSchedule = new Intent(getApplicationContext(),
+								CalendarView.class);
+						startActivity(toSchedule);
+					}
+					//staff list
+					else if (i == 1){
+						Toast.makeText(getApplicationContext(), display_name + "'s " + patient_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toProfile = new Intent(getApplicationContext(),
+								Profile.class);
+						startActivity(toProfile);
+					}
+					//staff list
+					else if (i == 2){
+						Toast.makeText(getApplicationContext(), display_name + "'s " + patient_menu_values[i],
+								Toast.LENGTH_SHORT).show();
+						updateMenu();
+						
+						Intent toReminders = new Intent(getApplicationContext(),
+								Reminders.class);
+						startActivity(toReminders);
+					}
+				}
+			
+			}
+		});
+		
+	}
+
+	public void updateMenu() {
+
+		if (sentType.equalsIgnoreCase("Admin")) {
+
+			lst.clear();
+			lst.addAll(Arrays.asList(admin_menu_values));
+
+			adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+					R.id.product_name, lst);
+			this.setListAdapter(adapter);
+		}
+
+		if (sentType.equalsIgnoreCase("Doctor")) {
+			lst.clear();
+			lst.addAll(Arrays.asList(doctor_menu_values));
+
+			adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+					R.id.product_name, lst);
+			this.setListAdapter(adapter);
+		}
+
+		if (sentType.equalsIgnoreCase("Nurse")) {
+
+			lst.clear();
+			lst.addAll(Arrays.asList(nurse_menu_values));
+
+			adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+					R.id.product_name, lst);
+			this.setListAdapter(adapter);
+		}
+
+		if (sentType.equalsIgnoreCase("Secretary")) {
+
+			lst.clear();
+			lst.addAll(Arrays.asList(sec_menu_values));
+
+			adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+					R.id.product_name, lst);
+			this.setListAdapter(adapter);
+		}
+
+		if (sentType.equalsIgnoreCase("Patient")) {
+
+			lst.clear();
+			lst.addAll(Arrays.asList(patient_menu_values));
+
+			adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+					R.id.product_name, lst);
+			this.setListAdapter(adapter);
+		}
+	}
+}

@@ -1,0 +1,92 @@
+package com.se3a04.medicalmobile;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class Profile extends Activity {
+
+	Button graph, infoChange, history;
+	TextView name_display, height_display, address_display, birthday_display,
+			telephone_display, weight_display, bp_display, powers_display;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.profile);
+
+		name_display = (TextView) findViewById(R.id.name_display);
+		height_display = (TextView) findViewById(R.id.height_display);
+		address_display = (TextView) findViewById(R.id.address_display);
+		birthday_display = (TextView) findViewById(R.id.birthday_display);
+		telephone_display = (TextView) findViewById(R.id.telephone_display);
+		weight_display = (TextView) findViewById(R.id.weight_display);
+		bp_display = (TextView) findViewById(R.id.bp_display);
+		powers_display = (TextView) findViewById(R.id.powers_display);
+
+		/**
+		 * This set of code below will be referring to the database instead of
+		 * blah
+		 */
+		name_display.setText("blah");
+		height_display.setText("blah");
+		address_display.setText("blah");
+		birthday_display.setText("blah");
+		telephone_display.setText("blah");
+		weight_display.setText("blah");
+		bp_display.setText("blah");
+		powers_display.setText("blah");
+
+		profileListener();
+
+	}
+
+	// need name and type of user to display profile.
+	String name = MainMenu.display_name;
+	String SentType = MainMenu.sentType;
+
+	public void profileListener() {
+		graph = (Button) findViewById(R.id.graph);
+		infoChange = (Button) findViewById(R.id.request_info_change);
+		history = (Button) findViewById(R.id.appointments);
+
+		graph.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent toGraphOptions = new Intent(getApplicationContext(),
+						GraphActivity.class);
+				startActivity(toGraphOptions);
+			}
+
+		});
+
+		infoChange.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent toGraphOptions = new Intent(getApplicationContext(),
+						InfoChange.class);
+				startActivity(toGraphOptions);
+			}
+
+		});
+		history.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent toHistory = new Intent(getApplicationContext(),
+						AppointmentHistory.class);
+				startActivity(toHistory);
+			}
+
+		});
+
+	}
+}

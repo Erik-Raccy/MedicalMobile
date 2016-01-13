@@ -1,0 +1,55 @@
+package com.se3a04.medicalmobile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+public class graphOptions extends ListActivity {
+	
+	
+	// List view Adapter
+	private ArrayAdapter<String> adapter;
+	private ListView lv;
+	private String[] graphOptions = new String[] { "Jim's awesomeness over time",
+			"graph functionallity over time", "work done with respect to due date"};
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.user_list);
+
+		lv = getListView(); // get the type of view
+
+		final ArrayList<String> graphOptions_lst = new ArrayList<String>(); // create an
+		graphOptions_lst.addAll(Arrays.asList(graphOptions));
+		adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+				R.id.product_name, graphOptions_lst);
+		this.setListAdapter(adapter);
+		
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> adapter, View lv, int i, long l){
+				
+				Toast.makeText(getApplicationContext(),graphOptions[i] ,
+						Toast.LENGTH_SHORT).show();
+				
+				
+				Intent toGraph = new Intent(getApplicationContext(),
+						graphOptions.class);
+				//add putExtra() here
+				startActivity(toGraph);
+			
+			}
+		});
+	}
+	
+
+	
+}

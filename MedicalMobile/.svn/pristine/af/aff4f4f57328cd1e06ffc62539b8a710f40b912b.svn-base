@@ -1,0 +1,10 @@
+package com.se3a04.medicalmobile;
+
+public class AppointmentMiniInfo {
+	public String date;
+	public String info;
+	public AppointmentMiniInfo(String date, String info){
+		this.date = date;
+		this.info = info;
+	}
+}

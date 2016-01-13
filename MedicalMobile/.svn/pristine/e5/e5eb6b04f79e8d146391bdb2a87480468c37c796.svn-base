@@ -1,0 +1,164 @@
+package com.se3a04.medicalmobile;
+
+import java.util.Vector;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class MedicalDatabase {
+	
+	
+	//======= Database Indexing Info ==========
+	public static int numberOfPatients;
+	public static int amountOfInfo;
+	//=========================================
+	
+	String[] columns;
+	
+	//Database Name
+	private static final String DATABASE_NAME = "Database1";
+	
+	//=========User Table Info=====================================
+	//Name
+	private static final String USER_TABLE = "UserTable";
+	
+	//Column keys
+	public static final String KEY_ROWID = "_id";
+	public static final String KEY_NAME = "users_name";
+	public static final String KEY_USERTYPE = "users_type";
+	public static final String KEY_USERNAME = "username";
+	public static final String KEY_PASSWORD = "password";
+	//All Columns
+	public static final String[] UserColumns = new String[]{KEY_ROWID, KEY_NAME, KEY_USERTYPE, KEY_USERNAME, KEY_PASSWORD};
+	//=============================================================
+	
+	//===========Appointment Table Info============================
+	//Name
+	private static final String APPOINTMENT_TABLE = "AppointmentTable";
+	
+	//Column keys
+	public static final String KEY_TIME = "appt_time";
+	public static final String KEY_DATE = "appt_date";
+	public static final String KEY_REQUESTER = "appt_requester";
+
+	//All Columns
+	public static final String[] ApptColumns = new String[]{KEY_TIME, KEY_DATE, KEY_REQUESTER};
+	
+	//=============================================================
+	
+	// if you ever want to see an overfull database just call the database MedicalDatabase
+	
+	private static final int DATABASE_VERSION = 1;
+	
+	private DbHelper ourHelper;
+	private final Context ourContext;
+	private SQLiteDatabase ourDatabase;
+	
+	private static class DbHelper extends SQLiteOpenHelper{
+		
+		
+		public DbHelper(Context context) {
+			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			// TODO Auto-generated method stub
+			db.execSQL("CREATE TABLE " + USER_TABLE + " (" +
+					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +    			//column1
+					KEY_NAME + " TEXT NOT NULL, " +										//column2
+					KEY_USERTYPE + " TEXT NOT NULL, " +									//column3
+					KEY_USERNAME + " TEXT NOT NULL, " +									//column4
+					KEY_PASSWORD + " TEXT NOT NULL);"									//column5
+			);
+			db.execSQL("CREATE TABLE " + APPOINTMENT_TABLE + " (" +
+					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +    			//column1
+					KEY_TIME + " TEXT NOT NULL, " +										//column2
+					KEY_DATE + " TEXT NOT NULL, " +										//column3
+					KEY_REQUESTER + " TEXT NOT NULL)"									//column4
+			);
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			// TODO Auto-generated method stub
+			db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS " + APPOINTMENT_TABLE);
+			onCreate(db);
+		}
+	}
+	
+	//constructor
+	public MedicalDatabase(Context c){
+		ourContext = c;
+	}
+	
+	public MedicalDatabase open(){
+		ourHelper = new DbHelper(ourContext);
+		ourDatabase = ourHelper.getWritableDatabase();
+		return this;
+	}
+	
+	public void close(){
+		ourHelper.close();
+	}
+	
+//	public long createEntry(String name, String userType){
+//		ContentValues cv = new ContentValues();
+//		cv.put(KEY_NAME, name);
+//		cv.put(KEY_USERTYPE, userType);
+//		return ourDatabase.insert(DATABASE_TABLE, null, cv);
+//	}
+	
+	////Currently prints all data in the database. Must be modified to search specific ranges and retrieve only 1 piece of data
+	//public String getData(){
+	//	String[] columns = new String[]{KEY_ROWID, KEY_NAME, KEY_USERTYPE};
+	//	Cursor c = ourDatabase.query(DATABASE_TABLE, columns, null, null, null, null, null);
+	//	String result = "";
+	//	int iRow = c.getColumnIndex(KEY_ROWID);
+	//	int iName = c.getColumnIndex(KEY_NAME);
+	//	int iUserType = c.getColumnIndex(KEY_USERTYPE);		
+	//	for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+	//		result = result + c.getString(iRow) + " " + c.getString(iName) + " " + c.getString(iUserType) + "\n";
+	//	}
+	//	return result;
+	//}
+	
+	//used for getting information from a selected column
+	public Vector <String> readUserColumn(String columnID){
+		Cursor c = ourDatabase.query(USER_TABLE, UserColumns, null, null, null, null, null);
+		Vector <String> columnData = new Vector <String>();
+		int iInfo = c.getColumnIndex(columnID);						
+		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+			columnData.add(c.getString(iInfo));
+		}
+		return columnData;
+	}
+	
+	//used for getting information from a selected row
+	public Vector <String> readUserRow(int rowID){
+		Cursor c = ourDatabase.query(USER_TABLE, UserColumns, null, null, null, null, null);
+		Vector <String> rowData = new Vector <String>();
+		for(int i = 0; i < columns.length; i++ ){
+			int iInfo = c.getColumnIndex(columns[i]);
+			c.moveToPosition(rowID);
+			rowData.add(c.getString(iInfo));
+		}
+		return rowData;
+	}
+	
+	// add a user to the database
+	public long addUser(String name, String userType, String password, String username){
+		ContentValues cv = new ContentValues();
+		cv.put(KEY_NAME, name);
+		cv.put(KEY_USERTYPE, userType);
+		cv.put(KEY_USERNAME, username);
+		cv.put(KEY_PASSWORD, password);
+		return ourDatabase.insert("UserTable", null, cv);
+		}
+	}

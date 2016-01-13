@@ -1,0 +1,48 @@
+package com.se3a04.medicalmobile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+public class Requests extends ListActivity {
+	
+	
+	// List view Adapter
+	private ArrayAdapter<String> adapter;
+	private ListView lv;
+	private String[] requests = new String[] { "can I be jim?",
+			"Can you give us 100%?", "blahh", "jimmelyn", "jimmosa" };
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.user_list);
+
+		lv = getListView(); // get the type of view
+
+		final ArrayList<String> requests_lst = new ArrayList<String>(); // create an
+		requests_lst.addAll(Arrays.asList(requests));
+		adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+				R.id.product_name, requests_lst);
+		this.setListAdapter(adapter);
+		
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> adapter, View lv, int i, long l){
+				
+				Toast.makeText(getApplicationContext(),requests[i]+ " selected",
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	
+
+	
+}

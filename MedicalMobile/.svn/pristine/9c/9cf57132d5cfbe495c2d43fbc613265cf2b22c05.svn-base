@@ -1,0 +1,56 @@
+package com.se3a04.medicalmobile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+public class PatientList extends ListActivity {
+	
+	
+	// List view Adapter
+	private ArrayAdapter<String> adapter;
+	private ListView lv;
+	private String[] patient = new String[] { "jim",
+			"jimbette", "jimby", "jimmelyn", "jimmosa" };
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.user_list);
+
+		lv = getListView(); // get the type of view
+
+		final ArrayList<String> patient_lst = new ArrayList<String>(); // create an
+		patient_lst.addAll(Arrays.asList(patient));
+		adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+				R.id.product_name, patient_lst);
+		this.setListAdapter(adapter);
+		
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> adapter, View lv, int i, long l){
+				
+				Toast.makeText(getApplicationContext(),patient[i]+ "'s profile",
+						Toast.LENGTH_SHORT).show();
+				
+				
+				Intent toProfile = new Intent(getApplicationContext(),
+						PatientList.class);
+				//we need to pass name to profile class in order to get the right profile
+				toProfile.putExtra("name", patient[i]);
+				startActivity(toProfile);
+			
+			}
+		});
+	}
+	
+
+	
+}

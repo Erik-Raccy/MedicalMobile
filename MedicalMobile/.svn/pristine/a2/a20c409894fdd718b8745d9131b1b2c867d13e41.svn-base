@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/user_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/who_is_signed_in"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Not signed in..." />
+
+    <Button
+        android:id="@+id/Sign_out_from_log_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/return_menu"
+        android:layout_centerHorizontal="true"
+        android:text="Sign out" />
+
+    <TextView
+        android:id="@+id/who_is_signed_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="76dp"
+        android:text="You are signed in as:"
+        android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/return_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Return to Main Menu" />
+
+</RelativeLayout>

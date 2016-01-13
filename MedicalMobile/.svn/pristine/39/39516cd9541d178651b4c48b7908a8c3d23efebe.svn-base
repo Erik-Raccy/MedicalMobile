@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="20dp"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/name_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:hint="Name"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/username_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name_display"
+        android:layout_centerHorizontal="true"
+        android:hint="Username"
+        android:ems="10" />
+
+    <EditText
+        android:id="@+id/password_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/username_display"
+        android:layout_centerHorizontal="true"
+        android:hint="Password"
+        android:ems="10" />
+
+    <EditText
+        android:id="@+id/type_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password_display"
+        android:layout_centerHorizontal="true"
+        android:hint="User Type"
+        android:ems="10" />
+
+    <EditText
+        android:id="@+id/address_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/type_display"
+        android:layout_centerHorizontal="true"
+        android:hint="Address"
+        android:ems="10" />
+
+    <EditText
+        android:id="@+id/birthday_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address_display"
+        android:layout_centerHorizontal="true"
+        android:hint="Birthday"
+        android:ems="10" />
+
+    <EditText
+        android:id="@+id/telephone_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/birthday_display"
+        android:layout_centerHorizontal="true"
+        android:hint="Telephone #"
+        android:ems="10" />
+
+    <Button
+        android:id="@+id/submit_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/telephone_display"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:text="Sumbit" />
+
+</RelativeLayout>

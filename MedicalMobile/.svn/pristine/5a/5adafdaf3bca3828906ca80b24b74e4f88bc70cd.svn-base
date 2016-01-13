@@ -1,0 +1,66 @@
+package com.se3a04.medicalmobile;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Toast;
+
+public class Profile extends Activity {
+
+	Button graph, infoChange, history;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.profile);
+		
+		profileListener();
+		
+	}
+
+	//need name and type of user to display profile.
+	String name = MainMenu.display_name;
+	String SentType = MainMenu.sentType;
+	
+	public void profileListener() {
+		graph=(Button) findViewById(R.id.graph);
+		infoChange=(Button) findViewById(R.id.request_info_change);
+		history=(Button) findViewById(R.id.appointments);
+		
+		graph.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent toGraphOptions = new Intent(
+						getApplicationContext(), graphOptions.class);
+				startActivity(toGraphOptions);
+			}
+			
+			});
+//		infoChange.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View arg0) {
+//				Intent toGraphOptions = new Intent(
+//						getApplicationContext(), infoChange.class);
+//				startActivity(toGraphOptions);
+//			}
+//			
+//			});
+		history.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent toHistory = new Intent(
+						getApplicationContext(), AppointmentHistory.class);
+				startActivity(toHistory);
+			}
+			
+			});
+		
+		
+			}
+}

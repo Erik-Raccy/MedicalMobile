@@ -1,0 +1,262 @@
+package com.se3a04.medicalmobile;
+
+import java.util.Vector;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class Profile extends Activity {
+	private MedicalDatabase database;
+	
+	private boolean invisible = false;
+	private int infoChangeMode;
+	private int historyMode;
+	private int graphMode;
+	String sentType, display_name;
+	Button graph, infoChange, history;
+	TextView name_display, height_display, address_display, birthday_display,
+			telephone_display, weight_display, bp_display, powers_display;
+
+	TextView height_tag, weight_tag, bp_tag, powers_tag;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		Bundle extras = getIntent().getExtras();
+
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.profile);
+		
+		database = LogIn.database;
+		
+		name_display = (TextView) findViewById(R.id.name_display);
+		address_display = (TextView) findViewById(R.id.address_display);
+		birthday_display = (TextView) findViewById(R.id.birthday_display);
+		telephone_display = (TextView) findViewById(R.id.telephone_display);
+		height_display = (TextView) findViewById(R.id.height_display);
+		weight_display = (TextView) findViewById(R.id.weight_display);
+		bp_display = (TextView) findViewById(R.id.bp_display);
+		powers_display = (TextView) findViewById(R.id.powers_display);
+
+		// text field that need to be made invisible
+		height_tag = (TextView) findViewById(R.id.height_tag);
+		weight_tag = (TextView) findViewById(R.id.weight_tag);
+		bp_tag = (TextView) findViewById(R.id.bp_tag);
+		powers_tag = (TextView) findViewById(R.id.powers_tag);
+		
+		//buttons
+		graph = (Button) findViewById(R.id.graph);
+		infoChange = (Button) findViewById(R.id.request_info_change);
+		history = (Button) findViewById(R.id.appointments);
+		
+		/**
+		 * This set of code below will be referring to the database instead of
+		 * blah
+		 */
+
+		//reset all possible hidden fields
+		setAllToVisible();
+		
+		//check if profile came from mainmenu or not
+		if (extras != null){
+			//profile accessed from a list
+			display_name = extras.getString("nameSend");
+			
+			//check if profile is for staff member
+			if(extras.getString("typeSend").equals("Staff")){
+				setMedicalToInvisible();
+				
+				if(MainMenu.sentType.equals("Admin")){
+					//current viewer is an admin
+					setMedicalToInvisible();
+					infoChange.setVisibility(View.INVISIBLE);
+					history.setVisibility(View.INVISIBLE);
+					graph.setText("Remove Staff");
+					graphMode =2;
+				}else if(MainMenu.sentType.equals("Secretary")){
+					//current viewer is an secretary
+					setMedicalToInvisible();
+					graph.setVisibility(View.INVISIBLE);
+					infoChange.setText("Change Information");
+					history.setText("Schedule");
+					historyMode =1;
+					infoChangeMode =1;
+				}
+				
+			}else{
+				if(MainMenu.sentType.equals("Secretary")){
+					//current viewer is an secretary
+					setMedicalToInvisible();
+					infoChange.setText("Change Information");
+					history.setText("Schedule");
+					graph.setText("Link Patient");
+					graphMode =1;
+					historyMode =1;
+					infoChangeMode =1;
+				}else if (MainMenu.sentType.equals("Admin")){
+					//current viewer is an admin
+					setMedicalToInvisible();
+					infoChange.setVisibility(View.INVISIBLE);
+					history.setVisibility(View.INVISIBLE);
+					graph.setText("Remove Patient");
+					graphMode =2;
+				}else if (MainMenu.sentType.equals("Doctor")||MainMenu.sentType.equals("Nurse")){
+					//current viewer is a doctor
+					infoChange.setText("Create Appointment");
+					infoChangeMode =2;
+				}	
+			}
+		}else{
+			//main menu profile
+			display_name = MainMenu.display_name;
+			
+			//check if profile is for staff member
+			if(MainMenu.sentType.equals("Nurse")||MainMenu.sentType.equals("Doctor")){
+				setMedicalToInvisible();
+				graph.setVisibility(View.INVISIBLE);
+				history.setVisibility(View.INVISIBLE);
+			}else if(MainMenu.sentType.equals("Secretary")||MainMenu.sentType.equals("Admin")){
+				//secretary or admin
+				setMedicalToInvisible();
+				graph.setVisibility(View.INVISIBLE);
+				history.setVisibility(View.INVISIBLE);
+				infoChange.setText("Change Information");
+				infoChangeMode =1;
+			}
+		}
+		
+		//set text fields
+		database.open();
+		Vector<String> user_vector = database.readUserRow(display_name, "users_name");
+		name_display.setText(display_name);
+		address_display.setText(user_vector.get(13));
+		birthday_display.setText(user_vector.get(12));
+		telephone_display.setText(user_vector.get(11));
+		height_display.setText(user_vector.get(6));
+		weight_display.setText(user_vector.get(7));
+		bp_display.setText(user_vector.get(8));
+		//bps_display.setText(user_vector.get(6));
+		//bpa_display.setText(user_vector.get(7));
+		powers_display.setText(user_vector.get(10));	
+		database.close();
+		profileListener();
+
+	}
+	
+	public void profileListener() {
+
+		graph.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				switch (graphMode) {
+				case 0:
+					Intent toGraphOptions = new Intent(getApplicationContext(),
+							GraphActivity.class);
+					startActivity(toGraphOptions);
+					break;
+				case 1:
+					Intent toLinkStaff = new Intent(getApplicationContext(),
+							LinkPatient.class);
+					startActivity(toLinkStaff);
+					break;
+				case 2:
+					MedicalDatabase database = LogIn.database;
+					
+					database.open();
+						database.deleteUser("users_name", display_name);
+					database.close();
+					
+					Toast.makeText(getApplicationContext(), display_name + " deleted",
+							Toast.LENGTH_SHORT).show();
+
+					break;
+				}
+			}
+
+		});
+
+		infoChange.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				switch (infoChangeMode) {
+				case 0:
+					Intent toInfoChange0 = new Intent(getApplicationContext(),
+							InfoChange.class);
+					startActivity(toInfoChange0);
+					break;
+				case 1:
+					Intent toInfoChange1 = new Intent(getApplicationContext(),
+							InfoChange.class);
+					startActivity(toInfoChange1);
+					break;
+				case 2:
+					Intent toAppInProgress = new Intent(getApplicationContext(),
+							AppointmentCreate.class);
+					startActivity(toAppInProgress);
+					break;
+				}
+			}
+
+		});
+		history.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				switch (historyMode) {
+				case 0:
+					Intent toHistory = new Intent(getApplicationContext(),
+							AppointmentHistory.class);
+					startActivity(toHistory);
+					break;
+				case 1:
+					Intent toSchedule = new Intent(getApplicationContext(),
+							CalendarView.class);
+					toSchedule.putExtra("targetUser", display_name);
+					startActivity(toSchedule);
+					break;
+				}
+			}
+
+		});
+
+	}
+	
+	private void setAllToVisible(){
+		infoChangeMode =0;
+		historyMode =0;
+		graphMode =0;
+		height_display.setVisibility(View.VISIBLE);
+		weight_display.setVisibility(View.VISIBLE);
+		bp_display.setVisibility(View.VISIBLE);
+		powers_display.setVisibility(View.VISIBLE);
+
+		height_tag.setVisibility(View.VISIBLE);
+		weight_tag.setVisibility(View.VISIBLE);
+		bp_tag.setVisibility(View.VISIBLE);
+		powers_tag.setVisibility(View.VISIBLE);
+		graph.setVisibility(View.VISIBLE);
+		history.setVisibility(View.VISIBLE);
+		infoChange.setVisibility(View.VISIBLE);
+		graph.setText("Graph");
+		history.setText("Appointment History");
+		infoChange.setText("Request Info Change");
+	}
+	
+	private void setMedicalToInvisible(){
+		height_display.setVisibility(View.INVISIBLE);
+		weight_display.setVisibility(View.INVISIBLE);
+		bp_display.setVisibility(View.INVISIBLE);
+		powers_display.setVisibility(View.INVISIBLE);
+		height_tag.setVisibility(View.INVISIBLE);
+		weight_tag.setVisibility(View.INVISIBLE);
+		bp_tag.setVisibility(View.INVISIBLE);
+		powers_tag.setVisibility(View.INVISIBLE);
+	}
+}

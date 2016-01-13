@@ -1,0 +1,334 @@
+package com.se3a04.medicalmobile;
+
+import java.util.Vector;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class MedicalDatabase {
+
+	//======= Database Indexing Info ==========
+	public static int numberOfPatients;
+	public static int amountOfInfo;
+	String[] columns = new String[1];
+	Vector<String> Column;
+	Vector<String> currentColumn;
+	Vector<String> currentRow;
+	Vector<String> correctColumn;
+	int getIndex;
+	Cursor c;
+	//=========================================
+	
+	//Database Name
+	private static final String DATABASE_NAME = "Database3";
+	
+	//=========User Table Info=====================================
+	//Name
+	private static final String USER_TABLE = "UserTable";
+	
+	//Column keys
+	public static final String KEY_USER_ID = "User_id";
+	public static final String KEY_NAME = "users_name";
+	public static final String KEY_USERTYPE = "users_type";
+	public static final String KEY_USERNAME = "username";
+	public static final String KEY_PASSWORD = "password";
+	public static final String KEY_AGE = "age";
+	public static final String KEY_HEIGHT = "height";
+	public static final String KEY_WEIGHT = "weight";
+	public static final String KEY_BP_SYSTOLIC = "bp_systolic";
+	public static final String KEY_BP_DIASTOLIC = "bp_diastolic";
+	public static final String KEY_POWER_LEVEL = "power_level";
+	public static final String KEY_TELEPHONE = "telephone";
+	public static final String KEY_BIRTHDAY = "birthday";
+	public static final String KEY_ADDRESS = "address"; 
+
+	//All Columns
+	public static final String[] UserColumns = new String[]{KEY_USER_ID, KEY_NAME, KEY_USERTYPE, KEY_USERNAME, KEY_PASSWORD, KEY_AGE, KEY_HEIGHT, KEY_WEIGHT, KEY_BP_SYSTOLIC, KEY_BP_DIASTOLIC, KEY_POWER_LEVEL, KEY_TELEPHONE, KEY_BIRTHDAY, KEY_ADDRESS};
+	//=============================================================
+	
+	//===========Appointment Table Info============================
+	//Name
+	private static final String APPOINTMENT_TABLE = "AppointmentTable";
+	
+	//Column keys
+	public static final String KEY_APPT_ID = "Appt_id";
+	public static final String KEY_APPT_TIME = "appt_time";
+	public static final String KEY_APPT_DATE = "appt_date";
+	public static final String KEY_APPT_USERNAME = "appt_username";
+	public static final String KEY_APPT_INFO = "appt_info";
+	
+	//All Columns
+	public static final String[] AppointmentColumns = new String[]{KEY_APPT_ID, KEY_APPT_TIME, KEY_APPT_DATE, KEY_APPT_USERNAME, KEY_APPT_INFO};
+	
+	//=============================================================
+	
+	
+	//=========Request Table Info==================================
+	
+	//Name
+	private static final String REQUEST_TABLE = "RequestTable";
+	
+	//Column Keys
+	public static final String KEY_REQUEST_ID = "Request_id";
+	public static final String KEY_TIME_REQUESTED = "requested_time";
+	public static final String KEY_DAY_REQUESTED = "requested_day";
+	public static final String KEY_USERNAME_REQUESTED = "who_requested";
+	public static final String KEY_INFO_REQUESTED = "info_requested";
+	
+	public static final String[] RequestColumns = new String[]{KEY_REQUEST_ID, KEY_TIME_REQUESTED, KEY_DAY_REQUESTED, KEY_USERNAME_REQUESTED, KEY_INFO_REQUESTED};
+	
+	//=============================================================
+	
+	// if you ever want to see an overfull database just call the database MedicalDatabase
+	
+	private static final int DATABASE_VERSION = 1;
+	
+	private DbHelper ourHelper;
+	private final Context ourContext;
+	private SQLiteDatabase ourDatabase;
+	
+	private static class DbHelper extends SQLiteOpenHelper{
+		
+		
+		public DbHelper(Context context) {
+			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			// TODO Auto-generated method stub
+			db.execSQL("CREATE TABLE " + USER_TABLE + " (" +
+					KEY_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +    			//column1
+					KEY_NAME + " TEXT NOT NULL, " +										//column2
+					KEY_USERTYPE + " TEXT NOT NULL, " +									//column3
+					KEY_USERNAME + " TEXT NOT NULL, " +									//column4
+					KEY_PASSWORD + " TEXT NOT NULL, " +
+					KEY_AGE + " TEXT NOT NULL, " +
+					KEY_HEIGHT + " TEXT NOT NULL, " +
+					KEY_WEIGHT + " TEXT NOT NULL, " +
+					KEY_BP_SYSTOLIC + " TEXT NOT NULL, " + 
+					KEY_BP_DIASTOLIC + " TEXT NOT NULL, " +
+					KEY_POWER_LEVEL + " TEXT NOT NULL, " +
+					KEY_TELEPHONE + " TEXT NOT NULL, " +
+					KEY_BIRTHDAY + " TEXT NOT NULL, " +
+					KEY_ADDRESS + " TEXT NOT NULL);"									
+			);
+			db.execSQL("CREATE TABLE " + APPOINTMENT_TABLE + " (" +
+					KEY_APPT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +    				//column1
+					KEY_APPT_TIME + " TEXT NOT NULL, " +									//column2
+					KEY_APPT_DATE + " TEXT NOT NULL, " +
+					KEY_APPT_USERNAME + " TEXT NOT NULL, " +
+					KEY_APPT_INFO + " TEXT NOT NULL);" 
+					//column4
+			);
+			db.execSQL("CREATE TABLE " + REQUEST_TABLE + " (" +
+					KEY_REQUEST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +    			//column1
+					KEY_TIME_REQUESTED + " TEXT NOT NULL, " +								//column2
+					KEY_DAY_REQUESTED + " TEXT NOT NULL, " +								//column3
+					KEY_USERNAME_REQUESTED + " TEXT NOT NULL, " +
+					KEY_INFO_REQUESTED + " TEXT NOT NULL);"									//column4
+			);
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			// TODO Auto-generated method stub
+			db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS " + APPOINTMENT_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS " + REQUEST_TABLE);
+			onCreate(db);
+		}
+	}
+	
+	//constructor
+	public MedicalDatabase(Context c){
+		ourContext = c;
+	}
+	
+	//open the database for reading and writing
+	public MedicalDatabase open(){
+		ourHelper = new DbHelper(ourContext);
+		ourDatabase = ourHelper.getWritableDatabase();
+		return this;
+	}
+	
+	//close the database
+	public void close(){
+		ourHelper.close();
+	}
+	
+	//get a column from the user table
+	public Vector <String> readUserColumn(String columnID){
+		columns[0] = columnID;
+		Cursor c = ourDatabase.query(USER_TABLE, columns, null, null, null, null, null);
+		Vector <String> columnData = new Vector <String>();
+		int iInfo = c.getColumnIndex(columnID);						
+		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+			columnData.add(c.getString(iInfo));
+		}
+		c.close();
+		return columnData;
+	}
+	
+	//get a specific appointment from the database
+		public Vector <String> readUserRow(String searchFor, String searchBy){
+			Vector <String> rowData = new Vector <String>();
+			for(int i = 0; i < UserColumns.length; i++) {
+				currentColumn = readUserColumn(UserColumns[i]);
+				for(int j = 0; j < currentColumn.size(); j++){
+					if (currentColumn.get(j).equals(searchFor)){
+						for(int k = 0; k < UserColumns.length; k++) {
+							correctColumn = readUserColumn(UserColumns[k]);
+							rowData.add(correctColumn.get(j));
+					}
+				}
+			}
+		}
+		return rowData;
+	}
+		
+	public void modifyUser(String name, String what, String toWhat){
+		currentRow = readUserRow(name,"users_name");
+		deleteUser("users_name", name);
+		for(int i = 0; i < UserColumns.length; i++){
+			if(what.equals(UserColumns[i])){
+				currentRow.set(i, toWhat);
+			}
+		}
+		addUser(currentRow.get(1), currentRow.get(2), currentRow.get(3), currentRow.get(4), currentRow.get(5), currentRow.get(6), currentRow.get(7), currentRow.get(8), currentRow.get(9), currentRow.get(10), currentRow.get(11), currentRow.get(12), currentRow.get(13));
+	}
+	
+	// add a user to the database
+	public long addUser(String name, String userType, String password, String username, String age, String height, String weight, String systolic, String diastolic, String powerLevel, String telephone, String birthday, String address){
+		ContentValues cv = new ContentValues();
+		cv.put(KEY_NAME, name);
+		cv.put(KEY_USERTYPE, userType);
+		cv.put(KEY_USERNAME, username);
+		cv.put(KEY_PASSWORD, password);
+		cv.put(KEY_AGE, age);
+		cv.put(KEY_HEIGHT, height);
+		cv.put(KEY_WEIGHT, weight);
+		cv.put(KEY_BP_SYSTOLIC, systolic);
+		cv.put(KEY_BP_DIASTOLIC, diastolic);
+		cv.put(KEY_POWER_LEVEL, powerLevel);
+		cv.put(KEY_TELEPHONE, telephone);
+		cv.put(KEY_BIRTHDAY, birthday);
+		cv.put(KEY_ADDRESS, address);
+		return ourDatabase.insert("UserTable", null, cv);
+		}
+	
+	// delete a user from the database
+	public boolean deleteUser(String byWhat, String what){
+		return ourDatabase.delete(USER_TABLE, byWhat + "=?", new String[] {what}) > 0;
+	}
+	
+	
+	//get a column from the database table
+	public Vector <String> readApptColumn(String columnID){
+		columns[0] = columnID;
+		Cursor c = ourDatabase.query(APPOINTMENT_TABLE, columns, null, null, null, null, null);
+		Vector <String> columnData = new Vector <String>();
+		int iInfo = c.getColumnIndex(columnID);						
+		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+			columnData.add(c.getString(iInfo));
+		}
+		c.close();
+		return columnData;
+	}
+	
+	//get a specific appointment from the database
+			public Vector <String> readApptRow(String searchFor, String searchBy){
+				Vector <String> rowData = new Vector <String>();
+				for(int i = 0; i < AppointmentColumns.length; i++) {
+					currentColumn = readApptColumn(UserColumns[i]);
+					for(int j = 0; j < currentColumn.size(); j++){
+						if (currentColumn.get(j).equals(searchFor)){
+							for(int k = 0; k < AppointmentColumns.length; k++) {
+								correctColumn = readApptColumn(UserColumns[k]);
+								rowData.add(correctColumn.get(j));
+						}
+					}
+				}
+			}
+			return rowData;
+		}
+	
+	// add an appointment to the database
+		public long addAppt(String time, String day, String who, String info){
+			ContentValues cv = new ContentValues();
+			cv.put(KEY_APPT_TIME, time);
+			cv.put(KEY_APPT_DATE, day);
+			cv.put(KEY_APPT_USERNAME, who);
+			cv.put(KEY_APPT_INFO, info);
+			return ourDatabase.insert("AppointmentTable", null, cv);
+		}
+	
+		//delete an appointment from the database
+		public boolean deleteAppt(String byWhat, String what){
+			return ourDatabase.delete(APPOINTMENT_TABLE, byWhat + "=" + what, null) > 0;
+		}
+	
+	
+	//gets a column from the request table
+		public Vector <String> readRequestColumn(String columnID){
+			columns[0] = columnID;
+			Cursor c = ourDatabase.query(REQUEST_TABLE, columns, null, null, null, null, null);
+			Vector <String> columnData = new Vector <String>();
+			int iInfo = c.getColumnIndex(columnID);						
+			for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+				columnData.add(c.getString(iInfo));
+			}
+			c.close();
+			return columnData;
+		}
+		
+		//get a specific request from the database
+				public Vector <String> readRequestRow(String searchFor, String searchBy){
+					Vector <String> rowData = new Vector <String>();
+					for(int i = 0; i < RequestColumns.length; i++) {
+						currentColumn = readRequestColumn(RequestColumns[i]);
+						for(int j = 0; j < currentColumn.size(); j++){
+							if (currentColumn.get(j).equals(searchFor)){
+								for(int k = 0; k < RequestColumns.length; k++) {
+									correctColumn = readRequestColumn(UserColumns[k]);
+									rowData.add(correctColumn.get(j));
+							}
+						}
+					}
+				}
+				return rowData;
+			}
+		
+		// add a request to the database
+		public long addRequest(String time, String day, String who, String info){
+			ContentValues cv = new ContentValues();
+			cv.put(KEY_TIME_REQUESTED, time);
+			cv.put(KEY_DAY_REQUESTED, day);
+			cv.put(KEY_USERNAME_REQUESTED, who);
+			cv.put(KEY_INFO_REQUESTED, info);
+			return ourDatabase.insert("RequestTable", null, cv);
+		}
+		
+		//delete a pending request from the request table
+		public boolean deleteRequest(String byWhat, String what){
+			return ourDatabase.delete(REQUEST_TABLE, byWhat + "=" + what, null) > 0;
+		}
+		
+		public boolean userTableClear(){
+			return ourDatabase.delete(USER_TABLE, null, null) > 0;
+		}
+		
+		public boolean appointmentTableClear(){
+			return ourDatabase.delete(APPOINTMENT_TABLE, null, null) > 0;
+		}
+		
+		public boolean requestTableClear(){
+			return ourDatabase.delete(REQUEST_TABLE, null, null) > 0;
+		}
+}
+	

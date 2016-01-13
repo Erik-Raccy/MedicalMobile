@@ -1,0 +1,39 @@
+package com.se3a04.medicalmobile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+public class Audits extends ListActivity {
+	
+	
+	// List view Adapter
+	private ArrayAdapter<String> adapter;
+	private String[] audits = new String[] { "audits", "aw... :( dits", "awd it's" , "awwwww tits"};
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.user_list);
+
+		getListView();
+
+		final ArrayList<String> audits_lst = new ArrayList<String>(); // create an
+		audits_lst.addAll(Arrays.asList(audits));
+		adapter = new ArrayAdapter<String>(this, R.layout.list_item,
+				R.id.product_name, audits_lst);
+		this.setListAdapter(adapter);
+		
+	}
+	
+
+	
+}
